@@ -21,6 +21,17 @@ export const createRecipe = createAsyncThunk('recipes/create', async (recipeData
   }
 })
 
+// edit recipe
+export const editRecipe = createAsyncThunk('recipes/edit', async (recipeData, thunkAPI) => {
+  try {
+    const token = thunkAPI.getState().auth.user.token
+    return await recipeService.editRecipe(recipeData, token)
+  } catch (error) {
+    const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString()
+    return thunkAPI.rejectWithValue(message)
+  }
+})
+
 // delete recipe
 export const deleteRecipe = createAsyncThunk('recipe/delete', async (id, thunkAPI) => {
   try {
@@ -62,12 +73,12 @@ export const getRecipe = createAsyncThunk('recipes/getDetails', async (id, thunk
     //return await recipeService.getRecipe(id, token)
     return await recipeService.getRecipe(id)
   } catch (error) {
-    const message = 'assda'
-    /*const message = (error.response && 
+    //const message = 'assda'
+    const message = (error.response && 
         error.response.data && 
         error.response.data.message) || 
       error.message || 
-      error.toString()*/
+      error.toString()
     return thunkAPI.rejectWithValue(message)
   }
 })
@@ -91,6 +102,22 @@ export const recipeSlice = createSlice({
         state.message = action.payload._id
       })
       .addCase(createRecipe.rejected, (state, action) => {
+        state.isLoading = false
+        state.isError = true
+        state.message = action.payload
+      })
+
+      .addCase(editRecipe.pending, (state) => {
+        state.isLoading = true
+      })
+      .addCase(editRecipe.fulfilled, (state, action) => {
+        state.isLoading = false
+        state.isSuccess = true
+        // new created recipe
+        state.recipes.push(action.payload)
+        state.message = action.payload._id
+      })
+      .addCase(editRecipe.rejected, (state, action) => {
         state.isLoading = false
         state.isError = true
         state.message = action.payload
@@ -131,9 +158,9 @@ export const recipeSlice = createSlice({
         state.isLoading = false
         state.isSuccess = true
         // removing from state removes it from UI, no need for refresh
-        state.recipes = state.recipes.filter(
-          (recipe) => recipe._id !== action.payload.id
-        )
+        // state.recipes = state.recipes.filter(
+        //   (recipe) => recipe._id !== action.payload.id
+        // )
       })
       .addCase(deleteRecipe.rejected, (state, action) => {
         state.isLoading = false

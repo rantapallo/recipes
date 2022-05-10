@@ -38,7 +38,7 @@ const getRecipe = asyncHandler(async (req, res) => {
   res.status(200).json(recipe)
 })
 
-// @desc Get recipes
+// @desc Get categories
 // @route GET /api/recipes/category/:name
 // @access Public
 
@@ -99,13 +99,14 @@ const updateRecipe = asyncHandler(async (req, res) => {
     res.status(401)
     throw new Error('User not authorized')
   }
-  //console.log(req.body)
+  console.log(req.body)
   const updatedRecipe = await Recipe.findByIdAndUpdate(
     req.params.id, 
     {
       user: req.user.id,
       name: req.body.name,
       instructions: req.body.instructions,
+      description: req.body.description,
       ingredients: req.body.ingredients,
       categories: req.body.categories
     }, 

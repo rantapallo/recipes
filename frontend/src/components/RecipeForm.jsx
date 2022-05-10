@@ -1,11 +1,11 @@
 import {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {createRecipe, reset} from '../features/recipes/recipeSlice'
+import {createRecipe, editRecipe, reset} from '../features/recipes/recipeSlice'
 import {getCategories} from '../features/category/categorySlice'
 import {TiDeleteOutline} from 'react-icons/ti'
 import { useNavigate } from 'react-router-dom'
 
-function RecipeForm() {
+function RecipeForm({recipe, recipeid}) {
   const [name, setName] = useState('')
   const [instructions, setInstructions] = useState('')
   const [ingredient, setIngredient] = useState('')
@@ -15,10 +15,12 @@ function RecipeForm() {
   const [category, setCategory] = useState([])
   const [categoryValue, setCategoryValue] = useState({})
   const [errorMsg, setErrorMsg] = useState('')
+  const [isEdit, setIsEdit] = useState(false)
+  const [isChanged, setIsChanged] = useState(false)
 
 
   const {categories} = useSelector((state) => state.categories)
-  const {isSuccess, isError, message} = useSelector((state) => state.recipes)
+  //const {isSuccess, isError, message} = useSelector((state) => state.recipes)
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -51,7 +53,7 @@ function RecipeForm() {
     }
   }
 
-  const onSubmit = e => {
+  const onSubmit = (e) => {
     e.preventDefault()
     if (name !== '' && instructions !== '') {
       const submitData = {
@@ -61,29 +63,49 @@ function RecipeForm() {
         ingredients: ingredientList,
         categories: category
       }
-      dispatch(createRecipe(submitData))
-  
-      setTimeout(() => navigate('/'), 300)
+      if(isEdit){
+        submitData['_id'] = recipeid
+        //console.log(submitData)
+        dispatch(editRecipe(submitData))
+      } else {
+        dispatch(createRecipe(submitData))
+      }
+      setTimeout(() => navigate('/recipes'), 300)
     } else {
       setErrorMsg('Please add name and instruction fields')
     }
-    
-    
+  }
+
+  const fillRecipeData = (recipe) => {
+    setName(recipe.name)
+    setDescription(recipe.description)
+    setInstructions(recipe.instructions)
+    recipe.categories.forEach((cat) => {
+      setCategory(prevState => [...prevState, cat])
+    })
+    recipe.ingredients.forEach((ing) => {
+      setIngredientList(prevState => [...prevState, {amount: ing['amount'], ingredient: ing['ingredient']}])
+    })
   }
 
   useEffect(() => {
-      
-     if(isError){
-      setErrorMsg(message)
-     }
-    
+    //setName(recipe.name)
+    if(!isChanged && Object.prototype.toString.call(recipe) === '[object Object]'){
+      //setTimeout(() => setIsEdit(true), 300)
+      setIsEdit(true)
+      setIsChanged(true)
+      fillRecipeData(recipe)
+    }
+  }, [recipe])
+
+  useEffect(() => {
     dispatch(getCategories())
     return () => {
       dispatch(reset())
     }
     
 
-  }, [isError, message, dispatch])
+  }, [dispatch])
   return (
     <section className='form'>
       {errorMsg && 
@@ -170,7 +192,7 @@ function RecipeForm() {
           </select>
         </div>
         <div className="form-group">
-          <button className="btn btn-block" type="submit">Add Recipe</button>
+          <button className="btn btn-block" type="submit">{isEdit ? 'Edit' : 'Add'} Recipe</button>
         </div>
       </form>
     </section>

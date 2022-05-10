@@ -18,6 +18,7 @@ function AddRecipe() {
   return (
     <div>
       <section className='heading'>
+        Add New Recipe
       </section>
       <RecipeForm />
     </div>

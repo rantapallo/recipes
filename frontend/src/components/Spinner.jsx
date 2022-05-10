@@ -4,7 +4,7 @@ function Spinner() {
   return (
     <div className="spinner-wrap">
       <section>
-        <span class="loader"></span>
+        <span className="loader"></span>
       </section>
     </div>
   )

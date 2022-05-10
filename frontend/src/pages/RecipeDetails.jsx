@@ -13,9 +13,14 @@ function RecipeDetails() {
   const {recipes, isLoading, isError, message} = useSelector((state) => state.recipes)
   const {id} = useParams()
 
-  const handleDelete = (id) => {
+  const handleDelete = () => {
     dispatch(deleteRecipe(id))
-    setTimeout(() => navigate('/'), 300)
+    setTimeout(() => navigate('/recipes'), 300)
+    //navigate('/')
+  }
+
+  const handleEdit = () => {
+    navigate('/recipes/edit/'+id)
   }
 
   useEffect(() => {
@@ -38,7 +43,7 @@ function RecipeDetails() {
 
   return (
     <div className="form-group">
-      <h1>{recipes.name}</h1>
+      <div className="heading">{recipes.name}</div>
       <div className='details-description'>
         {recipes.description}
       </div>
@@ -60,10 +65,15 @@ function RecipeDetails() {
       ))}
       <div>made by {recipes.user && recipes.user.name}</div>
       <div>created at {new Date(recipes.createdAt).toLocaleString('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'})}</div>
+      {recipes.createdAt !== recipes.updatedAt ? (
+        <div>modified at {new Date(recipes.updatedAt).toLocaleString('en-GB', {year: 'numeric', month: 'numeric', day: 'numeric'})}</div>
+      ) : ''}
+      
       {recipes.user && user && (
         recipes.user._id === user._id ? 
         (<>
-        <div style={{cursor: "pointer", marginTop: "20px"}} onClick={() => handleDelete(recipes._id)}>Delete recipe</div>
+        <div className="btn btn-small" onClick={() => handleDelete()}>Delete recipe</div>
+        <div className="btn btn-small" onClick={() => handleEdit()}>Edit recipe</div>
         </>) : ''
       )}
     </div>

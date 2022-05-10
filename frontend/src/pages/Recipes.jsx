@@ -29,7 +29,9 @@ function Dashboard() {
   }
   return (
     <>
-      <h1>Recipes</h1>
+      <div className="heading">
+        List of recipes
+      </div>
       <section className="content">
         {recipes.length > 0 ? (
           <div className="recipes">
