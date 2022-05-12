@@ -8,7 +8,7 @@ const User = require('../models/userModel')
 // @access Public
 
 const getRecipes = asyncHandler(async (req, res) => {
-  const recipes = await Recipe.find()
+  const recipes = await Recipe.find().sort({'createdAt': -1})
   .populate({
     path: 'user',
     select: 'name'
