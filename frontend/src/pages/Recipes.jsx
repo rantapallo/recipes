@@ -5,7 +5,7 @@ import {getRecipes, reset} from '../features/recipes/recipeSlice'
 import Spinner from '../components/Spinner'
 import RecipeItem from '../components/RecipeItem'
 
-function Dashboard() {
+function Recipes() {
   //const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -47,4 +47,4 @@ function Dashboard() {
   )
 }
 
-export default Dashboard
+export default Recipes
