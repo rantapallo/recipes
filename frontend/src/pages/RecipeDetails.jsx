@@ -72,7 +72,11 @@ function RecipeDetails() {
       {recipes.user && user && (
         recipes.user._id === user._id ? 
         (<>
-        <div className="btn btn-small" onClick={() => handleDelete()}>Delete recipe</div>
+        <div className="btn btn-small" onClick={() => {
+          if (window.confirm("Are you sure you want to delete this recipe?")) {
+            handleDelete()
+          }
+        }}>Delete recipe</div>
         <div className="btn btn-small" onClick={() => handleEdit()}>Edit recipe</div>
         </>) : ''
       )}
